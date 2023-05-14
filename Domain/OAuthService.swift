@@ -10,10 +10,7 @@ import Foundation
 /// Manages the flow of OAuth authentication flow
 class OAuthService {
     
-    private enum OAthError: Error {
-        case malformedLink
-        case exchangeFailed
-    }
+    // MARK: - Private Attributes
     
     /// Creates the necessary URLs for Authentication flow
     private let oauthClient: OAuthClient
@@ -21,9 +18,15 @@ class OAuthService {
     /// Randomly generated string passed during authentication flow
     private var state: String?
     
+    var onAuthenticationResult: ((Result<TokenBag, Error>) -> Void)?
+    
+    // MARK: - Initialization
+    
     init(oauthClient: OAuthClient) {
         self.oauthClient = oauthClient
     }
+    
+    // MARK: - Internal Methods
     
     /// Generates `URL` for authentication flow by generating value using `UUID`
     func getAuthPageUrl(state: String = UUID().uuidString) -> URL? {
@@ -34,10 +37,19 @@ class OAuthService {
     /// Method to extract data from the URL and perform the code exchange
     func exchangeCodeForToken(url: URL) {
         guard let state = state, let code = getCodeFromUrl(url: url) else {
+            onAuthenticationResult?(.failure(OAuthError.malformedLink))
             return
         }
         
-        oauthClient.exchangeCodeForToken(code: code, state: state) { _ in }
+        oauthClient.exchangeCodeForToken(code: code, state: state) { [weak self] result in
+            switch result {
+            case .success(let tokenBag):
+//                try? self?.tokenRepository.setToken(tokenBag: tokenBag)
+                self?.onAuthenticationResult?(.success(tokenBag))
+            case .failure:
+                self?.onAuthenticationResult?(.failure(OAuthError.exchangeFailed))
+            }
+        }
     }
 }
 

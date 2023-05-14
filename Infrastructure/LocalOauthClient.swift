@@ -15,7 +15,8 @@ class LocalOauthClient: OAuthClient {
     private let clientID = "68a74ed2695985b220f9"
     
     /// URI where the OAuth provider(Github) will redirect the user after they have authorized the application.
-    private let redirectURI = "com.ayush.OAuthLogin://authentication"
+//    private let redirectURI = "com.ayush.OAuthLogin://authentication"
+    private let redirectURI = "it.iacopo.github://authentication"
     /**
      Constructs the `URL` string with provided state value.
      

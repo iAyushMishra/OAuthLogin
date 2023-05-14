@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Type containing accessToken returned from  mock response.
 struct TokenBag {
     let accessToken: String
 }
