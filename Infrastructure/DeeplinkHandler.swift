@@ -23,7 +23,7 @@ class DeepLinkHandler {
     /// If a callback function is found, it is called with the deep link as its argument.
     func handleDeepLinkIfPossible(deepLink: DeepLink) {
         guard let callback = callbackMap[deepLink] else { return  }
-        
+        print("dplink Success")
         callback(deepLink)
     }
 }

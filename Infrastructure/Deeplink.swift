@@ -28,6 +28,7 @@ enum DeepLink: Hashable {
         
         switch deepLink {
         case .some(let urlToDeepLink):
+                print("Deeplink Success")
             self = urlToDeepLink(url)
         default:
             return nil

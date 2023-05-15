@@ -17,13 +17,15 @@ class OAuthService {
     
     /// Randomly generated string passed during authentication flow
     private var state: String?
+    private let tokenRepository: TokenRepository
     
     var onAuthenticationResult: ((Result<TokenBag, Error>) -> Void)?
     
     // MARK: - Initialization
     
-    init(oauthClient: OAuthClient) {
+    init(oauthClient: OAuthClient, tokenRepository: TokenRepository) {
         self.oauthClient = oauthClient
+        self.tokenRepository = tokenRepository
     }
     
     // MARK: - Internal Methods
@@ -44,7 +46,7 @@ class OAuthService {
         oauthClient.exchangeCodeForToken(code: code, state: state) { [weak self] result in
             switch result {
             case .success(let tokenBag):
-//                try? self?.tokenRepository.setToken(tokenBag: tokenBag)
+                try? self?.tokenRepository.setToken(tokenBag: tokenBag)
                 self?.onAuthenticationResult?(.success(tokenBag))
             case .failure:
                 self?.onAuthenticationResult?(.failure(OAuthError.exchangeFailed))
